@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SmartClass: Classroom Management Dashboard</title>
+<style>
+:root{--bg:#f2f5f4;--card:#fff;--tx:#10262b;--mu:#586c70;--ln:#dbe4e3;--ac:#0f6e6e;--acb:#dff1ef;--side:#12383a;--sidetx:#cfe3e0;--ok:#17744a;--okb:#e0f4e9;--bad:#b8372b;--badb:#fbe8e5;--warn:#8a5a00;--warnb:#fff1cf;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1a1c;--card:#14272a;--tx:#e4efee;--mu:#93a9ab;--ln:#244045;--ac:#4fc3b8;--acb:#173a3c;--side:#0a1213;--sidetx:#a9c4c1;--ok:#5fd29a;--okb:#143a29;--bad:#ff8d80;--badb:#3d1b18;--warn:#f0bd5a;--warnb:#3b2e10;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0d1a1c;--card:#14272a;--tx:#e4efee;--mu:#93a9ab;--ln:#244045;--ac:#4fc3b8;--acb:#173a3c;--side:#0a1213;--sidetx:#a9c4c1;--ok:#5fd29a;--okb:#143a29;--bad:#ff8d80;--badb:#3d1b18;--warn:#f0bd5a;--warnb:#3b2e10;color-scheme:dark}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--side);z-index:30}
+h1,h2,h3{font-family:Georgia,"Times New Roman",serif;margin:0;font-weight:700}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--side);color:#fff;display:flex;align-items:center;gap:14px;padding:10px 18px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;font-family:Georgia,serif;font-size:20px;font-weight:700}
+.brand span{background:#e8b93a;color:#12383a;border-radius:8px;width:32px;height:32px;display:grid;place-items:center;font-size:17px}
+.sp{flex:1}.seg{display:flex;background:rgba(255,255,255,.12);border-radius:10px;padding:3px}
+.seg button{border:0;background:none;color:#cfe3e0;padding:6px 14px;border-radius:8px;cursor:pointer;font:inherit;font-size:14px}
+.seg button.on{background:#fff;color:#12383a;font-weight:600}
+.ib{border:1px solid rgba(255,255,255,.3);background:none;color:#fff;border-radius:8px;padding:6px 10px;cursor:pointer;font:inherit;font-size:13px}
+.layout{display:grid;grid-template-columns:210px 1fr;min-height:calc(100vh - 56px)}
+nav{background:var(--side);padding:12px 10px;display:flex;flex-direction:column;gap:3px}
+nav button{display:flex;gap:10px;align-items:center;text-align:left;border:0;background:none;color:var(--sidetx);padding:10px 12px;border-radius:9px;cursor:pointer;font:inherit}
+nav button.on{background:rgba(255,255,255,.14);color:#fff;font-weight:600}
+main{padding:22px;max-width:1150px;width:100%}
+.top{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.top p{margin:2px 0 0;color:var(--mu)}
+.grid{display:grid;gap:14px}.k4{grid-template-columns:repeat(4,1fr)}.c2{grid-template-columns:1.2fr 1fr}
+.card{background:var(--card);border:1px solid var(--ln);border-radius:14px;padding:16px;min-width:0}
+.card h3{font-size:17px;margin-bottom:10px}.kpi b{font:700 30px Georgia,serif;display:block}.kpi span{color:var(--mu);font-size:13px}
+.kpi.bad b{color:var(--bad)}.kpi.ok b{color:var(--ok)}
+.bar{height:9px;background:var(--ln);border-radius:9px;overflow:hidden}.bar i{display:block;height:100%;background:var(--ok);border-radius:9px}
+.bar i.l{background:var(--bad)}.bar i.m{background:#d9a21b}
+.row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--ln)}.row:last-child{border:0}
+.row .n{flex:1;min-width:0}.row small{color:var(--mu);display:block}
+table{width:100%;border-collapse:collapse;font-size:14px}th,td{padding:8px 10px;border-bottom:1px solid var(--ln);text-align:left}
+th{color:var(--mu);font-weight:600;background:var(--bg)}.sc{overflow-x:auto}
+.tag{display:inline-block;padding:2px 9px;border-radius:20px;font-size:12px;font-weight:600}
+.t-ok{background:var(--okb);color:var(--ok)}.t-bad{background:var(--badb);color:var(--bad)}.t-w{background:var(--warnb);color:var(--warn)}.t-i{background:var(--acb);color:var(--ac)}
+button.pr{background:var(--ac);color:#fff;border:0;border-radius:9px;padding:9px 16px;cursor:pointer;font:inherit;font-weight:600}
+button.sm{border:1px solid var(--ln);background:var(--card);color:var(--tx);border-radius:8px;padding:5px 10px;cursor:pointer;font:inherit;font-size:13px}
+button.pr:hover,button.sm:hover{filter:brightness(1.08)}
+select,input,textarea{font:inherit;color:var(--tx);background:var(--card);border:1px solid var(--ln);border-radius:9px;padding:8px 10px;max-width:100%}
+.f{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}.f label{display:grid;gap:3px;font-size:13px;color:var(--mu)}
+.tt td{height:62px;vertical-align:top;font-size:13px;min-width:120px}.cell{border-radius:8px;padding:5px 7px;background:var(--acb);border-left:3px solid var(--ac);line-height:1.3}
+.cell small{display:block;color:var(--mu)}
+.msg{padding:10px 14px;border-radius:10px;margin-bottom:14px;font-size:14px}.msg.e{background:var(--badb);color:var(--bad)}.msg.s{background:var(--okb);color:var(--ok)}
+.pm{min-width:92px;border-radius:8px;border:0;padding:6px 10px;cursor:pointer;font:inherit;font-weight:600}
+.pm.p{background:var(--okb);color:var(--ok)}.pm.a{background:var(--badb);color:var(--bad)}
+.note{color:var(--mu);font-size:13px;margin-top:18px}
+@media(max-width:860px){.layout{grid-template-columns:1fr}nav{flex-direction:row;overflow-x:auto;padding:8px}nav button{white-space:nowrap}.k4{grid-template-columns:1fr 1fr}.c2{grid-template-columns:1fr}main{padding:14px}}
+@media(max-width:480px){.k4{grid-template-columns:1fr}}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+</style></head><body>
+<header><div class="brand"><span>🎓</span>SmartClass</div><div class="sp"></div>
+<div class="seg" id="roles"></div><button class="ib" data-a="theme">Theme</button><button class="ib" data-a="reset">Reset demo</button></header>
+<div class="layout"><nav id="nav"></nav><main id="main"></main></div>
+<script>
+const DAYS=['Mon','Tue','Wed','Thu','Fri'],TIMES=['09:00','10:00','11:15','13:00'];
+const C=[{id:'c1',code:'CS301',n:'Data Structures'},{id:'c2',code:'CS302',n:'Database Systems'},{id:'c3',code:'CS303',n:'Operating Systems'},{id:'c4',code:'CS304',n:'Web Technologies'}];
+const F=[{id:'f1',n:'Prof. Anand'},{id:'f2',n:'Prof. Meera'},{id:'f3',n:'Prof. Ravi'}];
+const R=[{id:'r1',n:'Room 101',cap:60,type:'Classroom'},{id:'r2',n:'Room 102',cap:60,type:'Classroom'},{id:'r3',n:'Room 204',cap:40,type:'Classroom'},{id:'l1',n:'Lab 1',cap:30,type:'Laboratory'},{id:'l2',n:'Lab 2',cap:30,type:'Laboratory'}];
+const NM=['Aarav Kumar','Diya Nair','Ishaan Rao','Kavya Iyer','Rohan Das','Sneha Pillai','Vikram Singh','Anika Menon','Karthik Raj','Meera Joshi','Arjun Patel','Nisha Thomas'];
+const NAV={dash:['🏠','Dashboard'],att:['✅','Attendance'],tt:['📅','Timetable'],ann:['📣','Announcements'],rooms:['🏫','Classrooms'],rep:['📊','Reports'],stu:['👥','Students']};
+const PERM={admin:['dash','att','tt','ann','rooms','rep','stu'],faculty:['dash','att','tt','ann','rooms','rep'],student:['dash','tt','ann']};
+const $=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const cn=id=>C.find(c=>c.id===id),fn=id=>F.find(f=>f.id===id).n,rn=id=>R.find(r=>r.id===id).n;
+const KEY='smartclass_demo_v1',today=()=>new Date().toISOString().slice(0,10);
+let D,UI={role:'admin',view:'dash',sec:'A',sel:'',marks:{},q:'',msg:'',ok:true,edit:null};
+function seed(){let x=7;const r=()=>(x=(x*9301+49297)%233280)/233280;
+ const st=NM.map((n,i)=>({id:'s'+i,n,reg:String(i+1).padStart(4,'0'),sec:i<6?'A':'B',on:1}));const att={};
+ st.forEach((s,i)=>{att[s.id]={};C.forEach((c,j)=>{const cd=28+j*2;let l=Math.floor(r()*6);if(i%5===3&&j<2)l=11;att[s.id][c.id]=[cd-l,cd]})});
+ const sl=[['c1','f1','r1',0,0,'A'],['c2','f2','r2',0,1,'A'],['c3','f3','r1',0,2,'A'],['c4','f1','l1',1,0,'A'],['c1','f1','r1',1,1,'A'],['c2','f2','l2',2,0,'A'],['c3','f3','r2',2,1,'A'],['c4','f1','r1',3,0,'A'],['c1','f1','r3',3,2,'A'],['c2','f2','r1',4,0,'A'],
+ ['c2','f2','r2',0,0,'B'],['c1','f1','r1',0,1,'B'],['c4','f1','r2',0,2,'B'],['c3','f3','r1',1,0,'B'],['c2','f2','r2',1,1,'B'],['c1','f1','r1',2,0,'B'],['c4','f1','r1',2,1,'B']].map((a,i)=>({id:i+1,c:a[0],f:a[1],r:a[2],d:a[3],t:a[4],sec:a[5]}));
+ return{st,att,sess:{},slots:sl,th:75,nid:100,
+ ann:[{id:1,title:'Internal assessment schedule',msg:'Internal assessments begin next week. Check the timetable for room changes.',aud:'All',by:'Administrator',ts:'Today'},{id:2,title:'Lab record submission',msg:'Submit Database Systems lab records by Friday.',aud:'Sec A',by:'Prof. Meera',ts:'Yesterday'},{id:3,title:'Low attendance alert',msg:'Students below the attendance threshold have been highlighted on the dashboard.',aud:'Faculty',by:'System',ts:'Yesterday'}],
+ book:[{id:1,r:'l2',f:'f2',d:3,t:1,s:'Pending'},{id:2,r:'r3',f:'f3',d:4,t:2,s:'Approved'}]}}
+function load(){try{const v=localStorage.getItem(KEY);if(v){D=JSON.parse(v);return}}catch(e){}D=seed()}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(D))}catch(e){}}
+const pct=(a,c)=>c?Math.round(a/c*1000)/10:null;
+const sp=(s,c)=>{const [a,b]=D.att[s.id][c];return pct(a,b)};
+const ov=s=>{let a=0,b=0;C.forEach(c=>{a+=D.att[s.id][c.id][0];b+=D.att[s.id][c.id][1]});return pct(a,b)};
+const cls=p=>p==null?'':p<D.th?'l':p<D.th+8?'m':'';
+const tg=p=>p==null?'<span class="tag t-i">No data</span>':p<D.th?'<span class="tag t-bad">Below '+D.th+'%</span>':'<span class="tag t-ok">On track</span>';
+const bar=p=>`<div class="bar"><i class="${cls(p)}" style="width:${p||0}%"></i></div>`;
+const me=()=>D.st.find(s=>s.on)||D.st[0];
+function conflict(n,ex){for(const s of D.slots){if(s.id===ex||s.d!==n.d||s.t!==n.t)continue;
+ if(s.f===n.f)return fn(n.f)+' already has a session at '+DAYS[n.d]+' '+TIMES[n.t];
+ if(s.sec===n.sec)return 'Section '+n.sec+' already has a session at '+DAYS[n.d]+' '+TIMES[n.t];
+ if(s.r===n.r)return rn(n.r)+' is already assigned at '+DAYS[n.d]+' '+TIMES[n.t]}
+ for(const b of D.book)if(b.s!=='Rejected'&&b.id!==ex&&b.d===n.d&&b.t===n.t&&b.r===n.r&&n.bk)return rn(n.r)+' already has a booking at that time';
+ if(n.bk)for(const s of D.slots)if(s.d===n.d&&s.t===n.t&&s.r===n.r)return rn(n.r)+' is used by a timetable session at that time';
+ return''}
+function render(){const p=PERM[UI.role];if(!p.includes(UI.view))UI.view='dash';
+ $('#roles').innerHTML=['admin','faculty','student'].map(r=>`<button data-a="role" data-v="${r}" class="${UI.role===r?'on':''}">${r[0].toUpperCase()+r.slice(1)}</button>`).join('');
+ $('#nav').innerHTML=p.map(v=>`<button data-a="view" data-v="${v}" class="${UI.view===v?'on':''}"><span>${NAV[v][0]}</span>${NAV[v][1]}</button>`).join('');
+ const m=UI.msg?`<div class="msg ${UI.ok?'s':'e'}">${esc(UI.msg)}</div>`:'';
+ $('#main').innerHTML=m+V[UI.view]()+'<p class="note">Demo data for the Smart Classroom Management Software (project 2026MIN045). Changes are saved only in your browser.</p>';UI.msg=''}
+const sel=(id,arr,v,k='n')=>`<select id="${id}">${arr.map(o=>`<option value="${o.id??o}" ${(o.id??o)==v?'selected':''}>${esc(o[k]||o)}</option>`).join('')}</select>`;
+const V={
+dash(){const role=UI.role;
+ if(role==='student'){const s=me();const o=ov(s);return `<div class="top"><div><h1>Welcome, ${esc(s.n.split(' ')[0])}</h1><p>Register no. ${s.reg}, Section ${s.sec}</p></div></div>
+ <div class="grid k4"><div class="card kpi ${o<D.th?'bad':'ok'}"><b>${o}%</b><span>Overall attendance</span></div><div class="card kpi"><b>${D.th}%</b><span>Required minimum</span></div><div class="card kpi"><b>${D.slots.filter(x=>x.sec===s.sec).length}</b><span>Sessions per week</span></div><div class="card kpi"><b>${D.ann.length}</b><span>Notices</span></div></div>
+ <div class="grid c2" style="margin-top:14px"><div class="card"><h3>Subject-wise attendance</h3>${C.map(c=>{const [a,b]=D.att[s.id][c.id],p=pct(a,b);return `<div class="row"><div class="n">${c.n}<small>${a} of ${b} sessions attended</small>${bar(p)}</div><b>${p}%</b></div>`}).join('')}</div>
+ <div class="card"><h3>This week’s classes</h3>${sched(s.sec,true)}</div></div>`}
+ const act=D.st.filter(s=>s.on),avg=pct(act.reduce((a,s)=>a+ov(s),0),act.length*100),low=act.filter(s=>ov(s)<D.th),pend=D.book.filter(b=>b.s==='Pending').length;
+ const wd=new Date().getDay(),d=wd>=1&&wd<=5?wd-1:0,ts=D.slots.filter(s=>s.d===d&&(role==='admin'||s.f==='f1'));
+ return `<div class="top"><div><h1>${role==='admin'?'Administrator dashboard':'Faculty dashboard'}</h1><p>Live summary of attendance, schedule and rooms</p></div></div>
+ <div class="grid k4"><div class="card kpi"><b>${act.length}</b><span>Active students</span></div><div class="card kpi ${avg<D.th?'bad':'ok'}"><b>${avg}%</b><span>Average attendance</span></div><div class="card kpi ${low.length?'bad':'ok'}"><b>${low.length}</b><span>Below ${D.th}% threshold</span></div><div class="card kpi"><b>${role==='admin'?pend:ts.length}</b><span>${role==='admin'?'Pending room requests':'Sessions '+(wd>=1&&wd<=5?'today':'on Monday')}</span></div></div>
+ <div class="grid c2" style="margin-top:14px"><div class="card"><h3>Average attendance by subject</h3>${C.map(c=>{const p=pct(act.reduce((a,s)=>a+D.att[s.id][c.id][0],0),act.reduce((a,s)=>a+D.att[s.id][c.id][1],0));return `<div class="row"><div class="n">${c.code} ${c.n}${bar(p)}</div><b>${p}%</b></div>`}).join('')}</div>
+ <div class="card"><h3>Students needing attention</h3>${low.length?low.map(s=>`<div class="row"><div class="n">${esc(s.n)}<small>Section ${s.sec}, Reg ${s.reg}</small></div><span class="tag t-bad">${ov(s)}%</span></div>`).join(''):'<p style="color:var(--mu)">Everyone is above the threshold.</p>'}</div></div>
+ <div class="grid c2" style="margin-top:14px"><div class="card"><h3>${DAYS[d]}’s sessions</h3>${ts.length?ts.map(s=>`<div class="row"><div class="n">${cn(s.c).n}<small>${TIMES[s.t]}, ${rn(s.r)}, Section ${s.sec}, ${fn(s.f)}</small></div></div>`).join(''):'<p style="color:var(--mu)">No sessions scheduled.</p>'}</div>
+ <div class="card"><h3>Latest announcements</h3>${D.ann.slice(0,3).map(a=>`<div class="row"><div class="n">${esc(a.title)}<small>${esc(a.aud)}, ${esc(a.by)}</small></div></div>`).join('')}</div></div>`},
+att(){const fl=UI.role==='faculty'?D.slots.filter(s=>s.f==='f1'):D.slots;if(!UI.sel||!fl.find(s=>s.id==UI.sel))UI.sel=fl[0].id;
+ const sl=D.slots.find(s=>s.id==UI.sel),stu=D.st.filter(s=>s.sec===sl.sec&&s.on),old=D.sess[sl.id+'|'+today()];
+ stu.forEach(s=>{if(!(s.id in UI.marks))UI.marks[s.id]=old&&s.id in old?old[s.id]:1});
+ return `<div class="top"><div><h1>Mark attendance</h1><p>Pick a scheduled session, mark each student, then save.</p></div></div>
+ <div class="card"><div class="f"><label>Session<select id="selslot">${fl.map(s=>`<option value="${s.id}" ${s.id==sl.id?'selected':''}>${DAYS[s.d]} ${TIMES[s.t]}, ${cn(s.c).n}, Section ${s.sec}</option>`).join('')}</select></label><label>Date<input value="${today()}" disabled></label><button class="sm" data-a="allp">Mark all present</button></div>
+ <div class="sc" style="margin-top:12px"><table><tr><th>Reg no.</th><th>Student</th><th>Attendance so far</th><th>Status</th></tr>${stu.map(s=>{const p=sp(s,sl.c);return `<tr><td>${s.reg}</td><td>${esc(s.n)}</td><td>${p==null?'–':p+'%'} ${tg(p)}</td><td><button class="pm ${UI.marks[s.id]?'p':'a'}" data-a="tog" data-v="${s.id}">${UI.marks[s.id]?'Present':'Absent'}</button></td></tr>`}).join('')}</table></div>
+ <p style="margin:12px 0 0"><button class="pr" data-a="saveatt">Save attendance</button> <span style="color:var(--mu);font-size:13px">${old?'This session was saved before; saving again corrects the entries.':''}</span></p></div>`},
+tt(){if(UI.sec==='All')UI.sec='A';const adm=UI.role==='admin',sec=UI.role==='student'?me().sec:UI.sec;
+ return `<div class="top"><div><h1>Timetable</h1><p>Section ${sec}. Clashes in faculty, section or room are rejected.</p></div>${UI.role==='student'?'':`<label style="font-size:13px;color:var(--mu)">Section ${sel('secsel',['A','B'],UI.sec)}</label>`}</div>
+ <div class="card sc"><table class="tt"><tr><th></th>${DAYS.map(d=>`<th>${d}</th>`).join('')}</tr>${TIMES.map((t,ti)=>`<tr><th>${t}</th>${DAYS.map((_,di)=>{const s=D.slots.find(x=>x.d===di&&x.t===ti&&x.sec===sec);return `<td>${s?`<div class="cell"><b>${cn(s.c).code}</b> ${cn(s.c).n}<small>${rn(s.r)}, ${fn(s.f)}</small>${adm?`<button class="sm" data-a="delslot" data-v="${s.id}" style="margin-top:4px">Remove</button>`:''}</div>`:''}</td>`}).join('')}</tr>`).join('')}</table></div>
+ ${adm?`<div class="card" style="margin-top:14px"><h3>Add a session</h3><div class="f"><label>Course${sel('ns_c',C,'c1',"n")}</label><label>Faculty${sel('ns_f',F,'f1')}</label><label>Room${sel('ns_r',R,'r1')}</label><label>Day<select id="ns_d">${DAYS.map((d,i)=>`<option value="${i}">${d}</option>`).join('')}</select></label><label>Time<select id="ns_t">${TIMES.map((d,i)=>`<option value="${i}">${d}</option>`).join('')}</select></label><button class="pr" data-a="addslot">Add session</button></div></div>`:''}`},
+ann(){const can=UI.role!=='student',s=me(),vis=D.ann.filter(a=>UI.role==='admin'||a.aud==='All'||(UI.role==='faculty'&&(a.aud==='Faculty'||a.aud.startsWith('Sec')))||(UI.role==='student'&&(a.aud==='Students'||a.aud==='Sec '+s.sec)));
+ return `<div class="top"><div><h1>Announcements</h1><p>Targeted notices with a stored history</p></div></div>
+ ${can?`<div class="card" style="margin-bottom:14px"><h3>Post an announcement</h3><div class="f"><label>Audience<select id="an_a">${['All','Students','Faculty','Sec A','Sec B'].map(o=>`<option>${o}</option>`).join('')}</select></label><label style="flex:1;min-width:160px">Title<input id="an_t"></label></div><label style="display:grid;gap:3px;font-size:13px;color:var(--mu);margin:10px 0">Message<textarea id="an_m" rows="2"></textarea></label><button class="pr" data-a="post">Post announcement</button></div>`:''}
+ <div class="card">${vis.map(a=>`<div class="row"><div class="n"><b>${esc(a.title)}</b><small>${esc(a.msg)}</small><small>${esc(a.by)}, ${esc(a.ts)}</small></div><span class="tag t-i">${esc(a.aud)}</span></div>`).join('')||'<p style="color:var(--mu)">No announcements yet.</p>'}</div>`},
+rooms(){const adm=UI.role==='admin';return `<div class="top"><div><h1>Classrooms and bookings</h1><p>Room use across the week and extra-session requests</p></div></div>
+ <div class="card"><h3>Room utilisation</h3>${R.map(r=>{const u=D.slots.filter(s=>s.r===r.id).length+D.book.filter(b=>b.r===r.id&&b.s==='Approved').length,p=Math.round(u/20*100);return `<div class="row"><div class="n">${r.n}<small>${r.type}, capacity ${r.cap}</small>${bar(p)}</div><b>${p}%</b></div>`}).join('')}</div>
+ <div class="card" style="margin-top:14px"><h3>Request a room</h3><div class="f"><label>Room${sel('rb_r',R,'r1')}</label><label>Day<select id="rb_d">${DAYS.map((d,i)=>`<option value="${i}">${d}</option>`).join('')}</select></label><label>Time<select id="rb_t">${TIMES.map((d,i)=>`<option value="${i}">${d}</option>`).join('')}</select></label><button class="pr" data-a="book">Send request</button></div></div>
+ <div class="card sc" style="margin-top:14px"><h3>Requests</h3><table><tr><th>Room</th><th>When</th><th>By</th><th>Status</th>${adm?'<th></th>':''}</tr>${D.book.map(b=>`<tr><td>${rn(b.r)}</td><td>${DAYS[b.d]} ${TIMES[b.t]}</td><td>${fn(b.f)}</td><td><span class="tag ${b.s==='Approved'?'t-ok':b.s==='Rejected'?'t-bad':'t-w'}">${b.s}</span></td>${adm?`<td>${b.s==='Pending'?`<button class="sm" data-a="appr" data-v="${b.id}">Approve</button> <button class="sm" data-a="rej" data-v="${b.id}">Reject</button>`:''}</td>`:''}</tr>`).join('')}</table></div>`},
+rep(){const rows=D.st.filter(s=>s.on&&(UI.sec==='All'||s.sec===UI.sec));
+ return `<div class="top"><div><h1>Attendance reports</h1><p>Percentage = sessions attended ÷ sessions conducted × 100</p></div><div class="f"><label>Section<select id="repsec">${['All','A','B'].map(o=>`<option ${o===UI.sec?'selected':''}>${o}</option>`).join('')}</select></label><label>Minimum %<input id="th" type="number" min="0" max="100" value="${D.th}" style="width:80px"></label></div></div>
+ <div class="card sc"><table><tr><th>Student</th><th>Sec</th>${C.map(c=>`<th>${c.code}</th>`).join('')}<th>Overall</th><th>Status</th></tr>${rows.map(s=>`<tr><td>${esc(s.n)}</td><td>${s.sec}</td>${C.map(c=>{const p=sp(s,c.id);return `<td style="color:${p!=null&&p<D.th?'var(--bad)':'inherit'}">${p==null?'–':p+'%'}</td>`}).join('')}<td><b>${ov(s)==null?'–':ov(s)+'%'}</b></td><td>${tg(ov(s))}</td></tr>`).join('')}</table></div>`},
+stu(){const q=UI.q.toLowerCase(),rows=D.st.filter(s=>!q||s.n.toLowerCase().includes(q)||s.reg.includes(q));
+ return `<div class="top"><div><h1>Students</h1><p>Add, search and deactivate student records</p></div><label style="font-size:13px;color:var(--mu)">Search<input id="q" value="${esc(UI.q)}" placeholder="Name or reg no."></label></div>
+ <div class="card" style="margin-bottom:14px"><h3>Add a student</h3><div class="f"><label>Name<input id="sn"></label><label>Section<select id="ss"><option>A</option><option>B</option></select></label><button class="pr" data-a="addstu">Add student</button></div></div>
+ <div class="card sc"><table><tr><th>Reg no.</th><th>Name</th><th>Section</th><th>Overall</th><th>Status</th><th></th></tr>${rows.map(s=>`<tr style="opacity:${s.on?1:.5}"><td>${s.reg}</td><td>${esc(s.n)}</td><td>${s.sec}</td><td>${ov(s)==null?'–':ov(s)+'%'}</td><td>${s.on?'<span class="tag t-ok">Active</span>':'<span class="tag t-w">Inactive</span>'}</td><td><button class="sm" data-a="act" data-v="${s.id}">${s.on?'Deactivate':'Activate'}</button></td></tr>`).join('')}</table></div>`}};
+function sched(sec){return DAYS.map((d,di)=>{const x=D.slots.filter(s=>s.d===di&&s.sec===sec).sort((a,b)=>a.t-b.t);return x.length?`<div class="row"><b style="width:38px">${d}</b><div class="n">${x.map(s=>`${TIMES[s.t]} ${cn(s.c).n} (${rn(s.r)})`).join('<br>')}</div></div>`:''}).join('')}
+function say(m,ok=true){UI.msg=m;UI.ok=ok}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(!b)return;const a=b.dataset.a,v=b.dataset.v;
+ if(a==='theme'){const r=document.documentElement,dk=r.dataset.theme?r.dataset.theme==='dark':matchMedia('(prefers-color-scheme:dark)').matches;r.dataset.theme=dk?'light':'dark';return}
+ if(a==='reset'){D=seed();UI.marks={};say('Demo data reset.');save()}
+ else if(a==='role'){UI.role=v;UI.view='dash'}
+ else if(a==='view'){UI.view=v;UI.marks={}}
+ else if(a==='tog')UI.marks[v]=UI.marks[v]?0:1;
+ else if(a==='allp')Object.keys(UI.marks).forEach(k=>UI.marks[k]=1);
+ else if(a==='saveatt'){const sl=D.slots.find(s=>s.id==UI.sel),key=sl.id+'|'+today(),old=D.sess[key],m={};
+  D.st.filter(s=>s.sec===sl.sec&&s.on).forEach(s=>{const rec=D.att[s.id][sl.c],now=UI.marks[s.id]?1:0;if(old&&s.id in old)rec[0]+=now-old[s.id];else{rec[1]++;rec[0]+=now}m[s.id]=now});
+  D.sess[key]=m;const low=D.st.filter(s=>s.sec===sl.sec&&s.on&&sp(s,sl.c)<D.th).length;say('Attendance saved for '+cn(sl.c).n+'. '+(low?low+' student(s) are now below '+D.th+'%.':'All students are on track.'));save()}
+ else if(a==='delslot'){D.slots=D.slots.filter(s=>s.id!=v);say('Session removed.');save()}
+ else if(a==='addslot'){const n={c:$('#ns_c').value,f:$('#ns_f').value,r:$('#ns_r').value,d:+$('#ns_d').value,t:+$('#ns_t').value,sec:UI.sec},er=conflict(n);
+  if(er)say('Session rejected: '+er+'.',false);else{D.slots.push(Object.assign({id:D.nid++},n));D.ann.unshift({id:D.nid++,title:'Timetable updated',msg:cn(n.c).n+' added on '+DAYS[n.d]+' at '+TIMES[n.t]+' in '+rn(n.r)+' for Section '+n.sec+'.',aud:'Sec '+n.sec,by:'System',ts:'Just now'});say('Session added and a notification was created.');save()}}
+ else if(a==='post'){const t=$('#an_t').value.trim(),m=$('#an_m').value.trim();if(!t||!m)say('Enter a title and a message.',false);else{D.ann.unshift({id:D.nid++,title:t,msg:m,aud:$('#an_a').value,by:UI.role==='admin'?'Administrator':'Prof. Anand',ts:'Just now'});say('Announcement posted.');save()}}
+ else if(a==='book'){const n={r:$('#rb_r').value,f:'f1',d:+$('#rb_d').value,t:+$('#rb_t').value,sec:'-',bk:1},er=conflict(n);
+  if(er)say('Request rejected: '+er+'.',false);else{D.book.push({id:D.nid++,r:n.r,f:n.f,d:n.d,t:n.t,s:'Pending'});say('Room request sent for approval.');save()}}
+ else if(a==='appr'){const bk=D.book.find(x=>x.id==v),er=conflict({r:bk.r,f:bk.f,d:bk.d,t:bk.t,sec:'-',bk:1},bk.id);if(er)say('Cannot approve: '+er+'.',false);else{bk.s='Approved';say('Request approved.');save()}}
+ else if(a==='rej'){D.book.find(x=>x.id==v).s='Rejected';say('Request rejected.');save()}
+ else if(a==='addstu'){const n=$('#sn').value.trim();if(!n)say('Enter the student’s name.',false);else{const id='s'+D.nid++,att={};C.forEach(c=>att[c.id]=[0,0]);D.att[id]=att;D.st.push({id,n,reg:String(D.st.length+1).padStart(4,'0'),sec:$('#ss').value,on:1});say(n+' added.');save()}}
+ else if(a==='act'){const s=D.st.find(x=>x.id===v);s.on=s.on?0:1;save()}
+ render()});
+document.addEventListener('change',e=>{const i=e.target.id;
+ if(i==='selslot'){UI.sel=e.target.value;UI.marks={}}else if(i==='secsel'||i==='repsec')UI.sec=e.target.value;else if(i==='th'){D.th=Math.max(0,Math.min(100,+e.target.value||0));save()}else return;render()});
+document.addEventListener('input',e=>{if(e.target.id==='q'){UI.q=e.target.value;const p=e.target.selectionStart;render();const q=$('#q');q.focus();q.setSelectionRange(p,p)}});
+load();render();
+</script></body></html>
